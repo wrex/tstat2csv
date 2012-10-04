@@ -8,32 +8,21 @@ class App
   include Methadone::Main
   include Methadone::CLILogging
 
-  main do # Add args you want: |like,so|
-    # your program code here
-    # You can access CLI options via
-    # the options Hash
+  main do |filename|
+    puts "timestamp, read_mbs_avg, write_mbs_avg, read_latency_avg, write_latency_avg, read_queue_avg, write_queue_avg, read_size_avg, write_size_avg, compression, dedupe, recv, send, capacity_ssd, capacity_hdd"
+
+    File.open(filename, "r") do |f|
+      f.each_line do |line|
+        next unless line =~ /^2012/
+        ary = line.split(%r{[ \t/]+})
+        puts ary.values_at(0,9,10,11,12,13,14,15,16,17,18,21,22,38,39).join(", ")
+      end
+    end
   end
 
-  # supplemental methods here
 
-  # Declare command-line interface here
-
-  # description "one line description of your app"
-  #
-  # Accept flags via:
-  # on("--flag VAL","Some flag")
-  # options[flag] will contain VAL
-  #
-  # Specify switches via:
-  # on("--[no-]switch","Some switch")
-  #
-  # Or, just call OptionParser methods on opts
-  #
-  # Require an argument
-  # arg :some_arg 
-  #
-  # # Make an argument optional
-  # arg :optional_arg, :optional
+  description "convert statsummary.txt files to csv"
+  arg :filename
 
   version Tstats2csv::VERSION
 
